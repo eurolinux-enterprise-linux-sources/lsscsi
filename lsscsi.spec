@@ -1,12 +1,13 @@
 Summary:        List SCSI devices (or hosts) and associated information
 Name:           lsscsi
 Version:        0.23
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        GPLv2+
 Group:          Applications/System
 Source0:        http://sg.danny.cz/scsi/%{name}-%{version}.tgz
 Patch0:         %{name}-0.23-fc-separators.patch
 Patch1:         %{name}-0.23-null.patch
+Patch2:         %{name}-0001-Fix-wrong-path-when-checking-protection_type-and-int.patch
 URL:            http://sg.danny.cz/scsi/lsscsi.html
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -25,7 +26,7 @@ Author:
 %setup -q
 %patch0 -p1 -b .fc-separators
 %patch1 -p1 -b .null
-
+%patch2 -p1 -b .protectiontype_path_fix
 
 %build
 %configure
@@ -49,6 +50,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Feb 25 2015 David Sommerseth <davids@redhat.com> - 0.23-3
+- fix wrong path when checking protection_type and integrity flags
+
 * Thu May  6 2010 Dan Horák <dhorak@redhat.com> - 0.23-2
 - fix path separator for FC devices (#589327)
 - fix for kernels with unified string representation of NULL (#589860)
@@ -114,7 +118,7 @@ rm -rf %{buildroot}
 - osst device file names fix
 * Sat Jan 18 2003 - Doug Gilbert <dgilbert(at)interlog(dot)com> 0.05-1
 - output st and osst device file names (rather than "-")
-* Thu Jan 14 2003 - Doug Gilbert <dgilbert(at)interlog(dot)com> 0.04-1
+* Tue Jan 14 2003 - Doug Gilbert <dgilbert(at)interlog(dot)com> 0.04-1
 - fix multiple listings of st devices (needed for lk 2.5.57)
 * Thu Jan 09 2003 - Doug Gilbert <dgilbert(at)interlog(dot)com> 0.03-1
 - add --generic option (list sg devices), scsi_level output
