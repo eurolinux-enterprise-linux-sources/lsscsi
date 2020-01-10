@@ -1,7 +1,7 @@
 Summary:        List SCSI devices (or hosts) and associated information
 Name:           lsscsi
 Version:        0.27
-Release:        1%{?dist}
+Release:        3%{?dist}
 License:        GPLv2+
 Group:          Applications/System
 Source0:        http://sg.danny.cz/scsi/%{name}-%{version}.tgz
@@ -45,6 +45,12 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 0.27-3
+- Mass rebuild 2014-01-24
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 0.27-2
+- Mass rebuild 2013-12-27
+
 * Fri May 17 2013 Dan Horák <dan[at]danny.cz> - 0.27-1
 - update to 0.27
 
