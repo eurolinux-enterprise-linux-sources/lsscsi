@@ -1,0 +1,32 @@
+From 83e9f168adfde6ae8ad1efcd661fc47d23bc85cc Mon Sep 17 00:00:00 2001
+From: David Sommerseth <davids@redhat.com>
+Date: Fri, 19 Jun 2015 10:03:57 +0200
+Subject: [PATCH] Remove enclosure information for FCP/FCoE
+
+After having done a little bit of research, I've not been able to
+find any sources for enclosure information in the FC/FCoE protocol.
+
+So for now, remove the attempts of printing this information
+on these protocols.  This can be reintroduced later when we know
+more how to extract this information.
+
+Signed-off-by: David Sommerseth <davids@redhat.com>
+---
+ src/lsscsi.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/lsscsi.c b/src/lsscsi.c
+index e494169..ee330bf 100644
+--- a/src/lsscsi.c
++++ b/src/lsscsi.c
+@@ -2267,7 +2267,6 @@ transport_tport_longer(const char * devname, const struct lsscsi_opts * op)
+                         printf("  port_state=%s\n", value);
+                 if (get_value(buff, "roles", value, sizeof(value)))
+                         printf("  roles=%s\n", value);
+-                print_enclosure_device(devname, b2, op);
+                 if (get_value(buff, "scsi_target_id", value, sizeof(value)))
+                         printf("  scsi_target_id=%s\n", value);
+                 if (get_value(buff, "supported_classes", value,
+-- 
+1.8.3.1
+

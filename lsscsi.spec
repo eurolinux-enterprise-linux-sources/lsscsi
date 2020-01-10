@@ -1,12 +1,14 @@
 Summary:        List SCSI devices (or hosts) and associated information
 Name:           lsscsi
 Version:        0.27
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        GPLv2+
 Group:          Applications/System
 Source0:        http://sg.danny.cz/scsi/%{name}-%{version}.tgz
 URL:            http://sg.danny.cz/scsi/lsscsi.html
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
+Patch0:         0001-Remove-enclosure-information-for-FCP-FCoE.patch
 
 %description
 Uses information provided by the sysfs pseudo file system in Linux kernel
@@ -21,7 +23,7 @@ Author:
 
 %prep
 %setup -q
-
+%patch0 -p1
 
 %build
 %configure
@@ -45,6 +47,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Jun 19 2015 David Sommerseth <davids@redhat.com> - 0.27-4
+- Remove enclosure queries for FCP/FCoE (#1062322)
+
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 0.27-3
 - Mass rebuild 2014-01-24
 
@@ -132,7 +137,7 @@ rm -rf %{buildroot}
 - osst device file names fix
 * Sat Jan 18 2003 - Doug Gilbert <dgilbert(at)interlog(dot)com> 0.05-1
 - output st and osst device file names (rather than "-")
-* Thu Jan 14 2003 - Doug Gilbert <dgilbert(at)interlog(dot)com> 0.04-1
+* Tue Jan 14 2003 - Doug Gilbert <dgilbert(at)interlog(dot)com> 0.04-1
 - fix multiple listings of st devices (needed for lk 2.5.57)
 * Thu Jan 09 2003 - Doug Gilbert <dgilbert(at)interlog(dot)com> 0.03-1
 - add --generic option (list sg devices), scsi_level output
