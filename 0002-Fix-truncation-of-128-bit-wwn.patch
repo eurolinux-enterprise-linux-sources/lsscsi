@@ -1,0 +1,59 @@
+From c54aff2e062194057f21a5fd922e53a491913bd8 Mon Sep 17 00:00:00 2001
+From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+Date: Thu, 20 Oct 2016 17:19:44 +0530
+Subject: [PATCH] Fix truncation of 128-bit wwn
+
+Currently with '--wwn' flag 128-bit wwns are getting truncated with
+their last 3 hex-digit missing. Below is a comparison of wwn reported
+by lspsci compared to wwn listed at /dev/disk/by-id directory.
+
+% lsscsi -w 0:0:5:0
+[0:0:5:0]    disk    0x60050764008181941000000000000  /dev/sdad
+
+% ls -l /dev/disk/by-id/wwn-*
+lrwxrwxrwx. 1 root root 10 Oct 19 01:08 /dev/disk/by-id/wwn-0x600507640081819410000000000001b1 -> ../../sdad
+
+To fix this the patch increases the size of member wwn of struct
+disk_wwn_node_entry to 35 chars to accommodate the extra '0x' prefix and
+null terminator. Also the size of the buffer wwn_str thats used to
+output wwn to the std-out is also increased to match the corresponding
+member of disk_wwn_node_entry.
+
+Reported-by: Ping Tian Han <pthan@cn.ibm.com>
+Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+---
+ src/lsscsi.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/lsscsi.c b/src/lsscsi.c
+index 974b3f1..7d71a3b 100644
+--- a/src/lsscsi.c
++++ b/src/lsscsi.c
+@@ -210,8 +210,8 @@ struct dev_node_list {
+ static struct dev_node_list* dev_node_listhead = NULL;
+ 
+ struct disk_wwn_node_entry {
+-       char wwn[32];
+-       char disk_bname[12];
++	char wwn[35]; /* '0x' + wwn<128-bit> + <null-terminator> */
++	char disk_bname[12];
+ };
+ 
+ #define DISK_WWN_NODE_LIST_ENTRIES 16
+@@ -2939,14 +2939,14 @@ one_sdev_entry(const char * dir_name, const char * devname,
+                 }
+                 if (wd[0]) {
+                         char dev_node[LMAX_NAME] = "";
+-                        char wwn_str[34];
++                        char wwn_str[35];
+                         enum dev_type typ;
+ 
+                         typ = (FT_BLOCK == non_sg.ft) ? BLK_DEV : CHR_DEV;
+                         if (get_wwn) {
+                                 if ((BLK_DEV == typ) &&
+                                     get_disk_wwn(wd, wwn_str, sizeof(wwn_str)))
+-                                        printf("%-30s  ", wwn_str);
++                                        printf("%-34s  ", wwn_str);
+                                 else
+                                         printf("                          "
+                                                "      ");

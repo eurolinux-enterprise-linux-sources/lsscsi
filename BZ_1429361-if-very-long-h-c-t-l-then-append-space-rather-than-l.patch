@@ -1,0 +1,23 @@
+diff -Nur lsscsi-0.27_old/src/lsscsi.c lsscsi-0.27/src/lsscsi.c
+--- lsscsi-0.27_old/src/lsscsi.c	2017-03-15 19:59:47.642500506 +0800
++++ lsscsi-0.27/src/lsscsi.c	2017-03-15 20:08:51.446308385 +0800
+@@ -25,6 +25,7 @@
+ #include <sys/stat.h>
+ #include <dirent.h>
+ #include <libgen.h>
++#include <sys/sysmacros.h>
+ #include <linux/major.h>
+ #include <linux/limits.h>
+ #include <time.h>
+@@ -2504,7 +2505,10 @@
+         } else
+                 snprintf(value, sizeof(value), "[%s]", devname);
+ 
+-        printf("%-*s", devname_len, value);
++        if ((int)strlen(value) >= devname_len)
++                 printf("%s ", value);  /* if very long, append a space */
++        else /* left justified with field length of devname_len */
++                printf("%-*s", devname_len, value);
+         if (! get_value(buff, "type", value, sizeof(value))) {
+                 printf("type?   ");
+         } else if (1 != sscanf(value, "%d", &type)) {

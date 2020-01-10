@@ -1,7 +1,7 @@
 Summary:        List SCSI devices (or hosts) and associated information
 Name:           lsscsi
 Version:        0.27
-Release:        4%{?dist}
+Release:        6%{?dist}
 License:        GPLv2+
 Group:          Applications/System
 Source0:        http://sg.danny.cz/scsi/%{name}-%{version}.tgz
@@ -9,6 +9,8 @@ URL:            http://sg.danny.cz/scsi/lsscsi.html
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Patch0:         0001-Remove-enclosure-information-for-FCP-FCoE.patch
+Patch1:         0002-Fix-truncation-of-128-bit-wwn.patch
+Patch2:         BZ_1429361-if-very-long-h-c-t-l-then-append-space-rather-than-l.patch
 
 %description
 Uses information provided by the sysfs pseudo file system in Linux kernel
@@ -24,6 +26,8 @@ Author:
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1 -b .long_scsi_id
 
 %build
 %configure
@@ -47,6 +51,12 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Mar 15 2017 Gris Ge <fge@redhat.com> - 0.27-6
+- Append a space if [hctl] is too long. (RHBZ #1429361)
+
+* Tue Feb 28 2017 Gris Ge <fge@redhat.com> 0.27-5
+- Fix truncation of 128-bit wwn of disk.
+
 * Fri Jun 19 2015 David Sommerseth <davids@redhat.com> - 0.27-4
 - Remove enclosure queries for FCP/FCoE (#1062322)
 
